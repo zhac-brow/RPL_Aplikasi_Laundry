@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url"
+              value="jdbc:mysql://localhost:3306/db_applaundry?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC" />
+        <property name="username" value="root" />
+        <property name="password" value="" />
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean id="pelangganDAO" class="com.mycompany.laundry.dao.PelangganDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="layananDAO" class="com.mycompany.laundry.dao.LayananDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="transaksiDAO" class="com.mycompany.laundry.dao.TransaksiDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="userDAO" class="com.mycompany.laundry.dao.UserDAO">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="pelangganService" class="com.mycompany.laundry.service.PelangganService">
+        <property name="pelangganDAO" ref="pelangganDAO" />
+    </bean>
+    <bean id="transaksiService" class="com.mycompany.laundry.service.TransaksiService">
+        <property name="transaksiDAO" ref="transaksiDAO" />
+        <property name="pelangganDAO" ref="pelangganDAO" />
+        <property name="layananDAO" ref="layananDAO" />
+    </bean>
+    <bean id="loginService" class="com.mycompany.laundry.service.LoginService">
+        <property name="userDAO" ref="userDAO" />
+    </bean>
+    <bean id="laporanService" class="com.mycompany.laundry.service.LaporanService">
+        <property name="transaksiDAO" ref="transaksiDAO" />
+    </bean>
+</beans>
